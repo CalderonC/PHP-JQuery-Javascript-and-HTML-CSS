@@ -452,11 +452,16 @@ $(function(){
 		return $html;
 	}
 	function formatTimestamp(unix_timestamp) {
-		var m = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+		//var m = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        	var m = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 		var d = new Date(unix_timestamp*1000);
 		return [m[d.getMonth()],' ',d.getDate(),', ',d.getFullYear()," ",
 			(d.getHours() % 12 || 12),":",(d.getMinutes() < 10 ? '0' : '')+d.getMinutes(),
 			" ",d.getHours() >= 12 ? 'PM' : 'AM'].join('');
+		/* This way you can change the language to display
+        	return [d.toLocaleString('default', { month: 'long' }),' ',d.getDate(),', ',d.getFullYear()," ",
+            		(d.getHours() % 12 || 12),":",(d.getMinutes() < 10 ? '0' : '')+d.getMinutes(),
+            		" ",d.getHours() >= 12 ? 'PM' : 'AM'].join('');*/
 	}
 	function formatFileSize(bytes) {
 		var s = ['bytes', 'KB','MB','GB','TB','PB','EB'];
