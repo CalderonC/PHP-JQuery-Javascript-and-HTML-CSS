@@ -107,6 +107,11 @@ if($_GET['do'] == 'list') {
 		rmrf($file);
 	}
 	exit;
+//Added Code
+} elseif ($_POST['do'] == 'rename') {
+    ren($file);
+
+    exit;
 } elseif ($_POST['do'] == 'mkdir' && $allow_create_folder) {
 	// don't allow actions outside root. we also filter out slashes to catch args like './../outside'
 	$dir = $_POST['name'];
@@ -164,6 +169,16 @@ function rmrf($dir) {
 	} else {
 		unlink($dir);
 	}
+//Added Code
+}function ren($file){
+    if($file = "FileToBeRenamed.txt"){
+        try{
+            rename($file,"FileRenamed.txt");
+        }
+        catch (Exception $e){
+            echo 'Caught exception: ',  $e->getMessage(), "\n";
+        }
+    }
 }
 function is_recursively_deleteable($d) {
 	$stack = [$d];
@@ -250,6 +265,10 @@ a.delete {display:inline-block;
 	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAADtSURBVHjajFC7DkFREJy9iXg0t+EHRKJDJSqRuIVaJT7AF+jR+xuNRiJyS8WlRaHWeOU+kBy7eyKhs8lkJrOzZ3OWzMAD15gxYhB+yzAm0ndez+eYMYLngdkIf2vpSYbCfsNkOx07n8kgWa1UpptNII5VR/M56Nyt6Qq33bbhQsHy6aR0WSyEyEmiCG6vR2ffB65X4HCwYC2e9CTjJGGok4/7Hcjl+ImLBWv1uCRDu3peV5eGQ2C5/P1zq4X9dGpXP+LYhmYz4HbDMQgUosWTnmQoKKf0htVKBZvtFsx6S9bm48ktaV3EXwd/CzAAVjt+gHT5me0AAAAASUVORK5CYII=) no-repeat scroll 0 2px;
 	color:#d00;	margin-left: 15px;font-size:11px;padding:0 0 0 13px;
 }
+	
+a.rename {display:inline-block;
+    color:teal;	margin-left: 15px;font-size:11px;padding:0 0 0 13px;
+}
 .name {
 	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAABAklEQVRIie2UMW6DMBSG/4cYkJClIhauwMgx8CnSC9EjJKcwd2HGYmAwEoMREtClEJxYakmcoWq/yX623veebZmWZcFKWZbXyTHeOeeXfWDN69/uzPP8x1mVUmiaBlLKsxACAC6cc2OPd7zYK1EUYRgGZFkG3/fPAE5fIjcCAJimCXEcGxKnAiICERkSIcQmeVoQhiHatoWUEkopJEkCAB/r+t0lHyVN023c9z201qiq6s2ZYA9jDIwx1HW9xZ4+Ihta69cK9vwLvsX6ivYf4FGIyJj/rg5uqwccd2Ar7OUdOL/kPyKY5/mhZJ53/2asgiAIHhLYMARd16EoCozj6EzwCYrrX5dC9FQIAAAAAElFTkSuQmCC) no-repeat scroll 0px 12px;
 	padding:15px 0 10px 40px;
@@ -320,6 +339,15 @@ $(function(){
 		},'json');
 		return false;
 	});
+	//Added Code
+	$('#table').on('click','.rename',function(data) {
+		$.post("",{'do':'rename',file:$(this).attr('data-file'),xsrf:XSRF},function(response){
+		    list();
+		    window.location.reload(true);
+		},'json');
+		return false;
+	});
+
 
 	$('#mkdir').submit(function(e) {
 		var hashval = decodeURIComponent(window.location.hash.substr(1)),
@@ -424,6 +452,8 @@ $(function(){
 		var $dl_link = $('<a/>').attr('href','?do=download&file='+ encodeURIComponent(data.path))
 			.addClass('download').text('download');
 		var $delete_link = $('<a href="#" />').attr('data-file',data.path).addClass('delete').text('delete');
+		//Added Code
+        	var $rename_link = $('<a href="#" />').attr('data-file',data.path).addClass('rename').text('rename');
 		var perms = [];
 		if(data.is_readable) perms.push('read');
 		if(data.is_writable) perms.push('write');
@@ -435,7 +465,7 @@ $(function(){
 				.html($('<span class="size" />').text(formatFileSize(data.size))) )
 			.append( $('<td/>').attr('data-sort',data.mtime).text(formatTimestamp(data.mtime)) )
 			.append( $('<td/>').text(perms.join('+')) )
-			.append( $('<td/>').append($dl_link).append( data.is_deleteable ? $delete_link : '') )
+			.append( $('<td/>').append($dl_link).append( data.is_deleteable ? $delete_link : '').append($rename_link) )
 		return $html;
 	}
 	function renderBreadcrumbs(path) {
