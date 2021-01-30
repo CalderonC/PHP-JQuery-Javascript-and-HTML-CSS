@@ -19,7 +19,7 @@ $allow_show_folders = true; // Set to false to hide all subdirectories
 $disallowed_patterns = ['*.php'];  // must be an array.  Matching files not allowed to be uploaded
 $hidden_patterns = ['*.php','.*']; // Matching files hidden in directory index
 
-$PASS = '';  // Set the password, to access the file manager... (optional)
+$PASS = 'password';  // Set the password, to access the file manager... (optional)
 
 if($PASS) {
 
@@ -35,7 +35,8 @@ if($PASS) {
 		echo '<html>.
                 <body>.
                     <form action=? method=post>.
-                        PASSWORD:<input type=password name=p autofocus/>.
+		    	<label style="font-weight: bold"><h3>Please enter your password:</h3></label>
+                        PASSWORD:<input type=password name=p autofocus placeholder="Please enter your password:"/>.
                     </form>.
                 </body>.
               </html>';
